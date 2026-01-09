@@ -12,7 +12,7 @@
             </list>
         </field>
     </record>
-
+   <!-- ok this a simple model to understand how it works on different way to used it -->
     <record id="course_form_view" model="ir.ui.view">
         <field name="name">college.course.form</field>
         <field name="model">college.course</field>
