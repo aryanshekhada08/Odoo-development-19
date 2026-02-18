@@ -1,0 +1,13 @@
+<odoo>
+
+    <!-- Student can see ONLY their own lost items -->
+    <record id="lost_item_student_rule" model="ir.rule">
+        <field name="name">Lost Item: Student Own Records</field>
+        <field name="model_id" ref="model_student_lost_item"/>
+        <field name="domain_force">
+            [('student_id', '=', user.partner_id.id)]
+        </field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+</odoo>
