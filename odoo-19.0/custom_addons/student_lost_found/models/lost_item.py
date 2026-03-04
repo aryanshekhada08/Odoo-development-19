@@ -23,15 +23,16 @@ class LostItem(models.Model):
         ('found', 'Found'),
         ('verified', 'Verified'),
         ('returned', 'Returned'),
-    ], default='lost', tracking=True)
+    ], default='lost')
 
     is_active = fields.Boolean(default=True)
-    
-def action_mark_found(self):
-    self.state = 'found'
 
-def action_verify(self):
-    self.state = 'verified'
+    # ✅ METHODS MUST BE INSIDE CLASS
+    def action_mark_found(self):
+        self.state = 'found'
 
-def action_return(self):
-    self.state = 'returned'
+    def action_verify(self):
+        self.state = 'verified'
+
+    def action_return(self):
+        self.state = 'returned'

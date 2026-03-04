@@ -13,6 +13,6 @@ class CollegeCourse(models.Model):
         'college.student', 'course_id', string="Students"
     )
 
-    _sql_constraints = [
-        ('unique_course_code', 'unique(code)', 'Course code must be unique!')
-    ]
+    # _sql_constraints = [
+    #     ('unique_course_code', 'unique(code)', 'Course code must be unique!')
+    # ]
