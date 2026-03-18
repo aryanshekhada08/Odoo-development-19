@@ -5,7 +5,9 @@
     'description': 'This is the base module for our Shop ERP system.',
     'author': 'Aryan',
     'depends': ['base'],
-    'data': [],
+    'data': [
+        'views/menu.xml',
+    ],
     'installable': True,
     'application': True,
 }

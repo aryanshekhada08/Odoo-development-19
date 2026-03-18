@@ -44,7 +44,7 @@
     <!-- Product Menu -->
     <menuitem id="menu_product"
             name="Products"
-            parent="menu_shop_root"
+            parent="shop_base.menu_shop_root"
             action="action_product"/>
 
 </odoo>

@@ -39,11 +39,9 @@
     </record>
 
     <!-- Menu -->
-    <menuitem id="menu_shop_root" name="Shop"/>
-    
     <menuitem id="menu_customer"
               name="Customers"
-              parent="menu_shop_root"
+             parent="shop_base.menu_shop_root"
               action="action_customer"/>
 
 </odoo>
