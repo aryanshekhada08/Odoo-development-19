@@ -1,0 +1,37 @@
+<odoo>
+
+    <!-- FORM VIEW -->
+    <record id="view_dashboard_form" model="ir.ui.view">
+        <field name="name">shop.dashboard.form</field>
+        <field name="model">shop.dashboard</field>
+        <field name="arch" type="xml">
+            <form string="Dashboard">
+                <sheet>
+                    <group>
+                        <field name="total_sales"/>
+                        <field name="total_revenue"/>
+                        <field name="total_customers"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ACTION -->
+    <record id="action_dashboard" model="ir.actions.act_window">
+        <field name="name">Dashboard</field>
+        <field name="res_model">shop.dashboard</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+    </record>
+
+    <!-- MENU -->
+  
+
+    <menuitem id="menu_dashboard"
+              name="Dashboard"
+              parent="shop_base.menu_shop_root"
+              action="action_dashboard"
+              sequence="1"/>
+
+</odoo>
