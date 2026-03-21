@@ -13,7 +13,7 @@ class Sale(models.Model):
     order_line = fields.One2many('shop.sale.line', 'sale_id', string="Order Lines")
 
     total = fields.Float("Total", compute="_compute_total")
-
+    invoice_count = fields.Integer("Invoice Count", compute="_compute_invoice_count")
     state = fields.Selection([
         ('draft', 'Draft'),
         ('confirmed', 'Confirmed'),
@@ -61,3 +61,26 @@ class Sale(models.Model):
             if record.state != 'draft':
                 raise ValidationError("You can only delete Draft orders!")
         return super().unlink()
+    
+    def action_create_invoice(self):
+        for record in self:
+            invoice = self.env['shop.invoice'].create({
+                'sale_id': record.id,
+            })
+
+    def _compute_invoice_count(self):
+        for record in self:
+            count = self.env['shop.invoice'].search_count([
+                ('sale_id', '=', record.id)
+            ])
+            record.invoice_count = count
+
+    def action_view_invoices(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Invoices',
+            'res_model': 'shop.invoice',
+            'view_mode': 'list,form',
+            'domain': [('sale_id', '=', self.id)],
+        }

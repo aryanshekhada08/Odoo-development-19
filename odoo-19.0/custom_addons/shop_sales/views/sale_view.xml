@@ -69,8 +69,24 @@
                             invisible="state == 'draft'"/>
 
                     <field name="state" widget="statusbar"/>
+                     <button name="action_create_invoice"
+                            string="Create Invoice"
+                            type="object"
+                            class="btn-secondary"/>
                 </header>
                 <sheet>
+                    <div class="oe_button_box" name="button_box">
+
+                        <button name="action_view_invoices"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-file">
+
+                            <field name="invoice_count" widget="statinfo" string="Invoices"/>
+                            
+                        </button>
+
+                    </div>
                     <group>
                         <field name="name" readonly="1"/>
                         <field name="customer_id"/>

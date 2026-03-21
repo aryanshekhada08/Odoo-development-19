@@ -1,0 +1,8 @@
+<odoo>
+    <record id="seq_invoice" model="ir.sequence">
+        <field name="name">Invoice Sequence</field>
+        <field name="code">shop.invoice</field>
+        <field name="prefix">INV/</field>
+        <field name="padding">4</field>
+    </record>
+</odoo>
