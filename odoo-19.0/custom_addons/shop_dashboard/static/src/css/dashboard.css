@@ -1,0 +1,28 @@
+.kpi-card {
+    padding: 25px;
+    border-radius: 15px;
+    color: white;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    transition: 0.3s;
+}
+
+.kpi-card:hover {
+    transform: scale(1.05);
+}
+
+.kpi-green {
+    background: linear-gradient(135deg, #4CAF50, #2E7D32);
+}
+
+.kpi-blue {
+    background: linear-gradient(135deg, #2196F3, #1565C0);
+}
+
+.kpi-orange {
+    background: linear-gradient(135deg, #FF9800, #EF6C00);
+}
+
+.chart-container {
+    margin-top: 40px;
+    text-align: center;
+}
