@@ -1,0 +1,30 @@
+<odoo>
+
+    <!-- LIST -->
+    <record id="view_stock_history_list" model="ir.ui.view">
+        <field name="name">stock.history.list</field>
+        <field name="model">shop.stock.history</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="product_id"/>
+                <field name="change_qty"/>
+                <field name="note"/>
+                <field name="date"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ACTION -->
+    <record id="action_stock_history" model="ir.actions.act_window">
+        <field name="name">Stock History</field>
+        <field name="res_model">shop.stock.history</field>
+        <field name="view_mode">list</field>
+    </record>
+
+    <!-- MENU -->
+    <menuitem id="menu_stock_history"
+              name="Stock History"
+              parent="shop_base.menu_shop_root"
+              action="action_stock_history"/>
+
+</odoo>

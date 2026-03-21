@@ -1,32 +1,51 @@
 <odoo>
 
-    <!-- FORM VIEW -->
     <record id="view_dashboard_form" model="ir.ui.view">
         <field name="name">shop.dashboard.form</field>
         <field name="model">shop.dashboard</field>
         <field name="arch" type="xml">
+
             <form string="Dashboard">
                 <sheet>
-                    <group>
-                        <field name="total_sales"/>
-                        <field name="total_revenue"/>
-                        <field name="total_customers"/>
-                    </group>
+
+                    <!-- 🔥 KPI CARDS -->
+                    <div class="row">
+
+                        <div class="col-4">
+                            <div style="background:#4CAF50;color:white;padding:20px;border-radius:10px;">
+                                <h3>Total Orders</h3>
+                                <h1><field name="total_sales"/></h1>
+                            </div>
+                        </div>
+
+                        <div class="col-4">
+                            <div style="background:#2196F3;color:white;padding:20px;border-radius:10px;">
+                                <h3>Total Revenue</h3>
+                                <h1><field name="total_revenue"/></h1>
+                            </div>
+                        </div>
+
+                        <div class="col-4">
+                            <div style="background:#FF9800;color:white;padding:20px;border-radius:10px;">
+                                <h3>Total Customers</h3>
+                                <h1><field name="total_customers"/></h1>
+                            </div>
+                        </div>
+
+                    </div>
+
                 </sheet>
             </form>
+
         </field>
     </record>
 
-    <!-- ACTION -->
     <record id="action_dashboard" model="ir.actions.act_window">
         <field name="name">Dashboard</field>
         <field name="res_model">shop.dashboard</field>
         <field name="view_mode">form</field>
         <field name="target">current</field>
     </record>
-
-    <!-- MENU -->
-  
 
     <menuitem id="menu_dashboard"
               name="Dashboard"

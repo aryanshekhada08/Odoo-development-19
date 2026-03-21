@@ -84,3 +84,42 @@ class Sale(models.Model):
             'view_mode': 'list,form',
             'domain': [('sale_id', '=', self.id)],
         }
+    def action_done(self):
+        for record in self:
+
+            if record.state == 'done':
+                continue
+
+            for line in record.order_line:
+
+                if line.product_id.quantity < line.quantity:
+                    raise ValidationError(f"Not enough stock for {line.product_id.name}")
+
+                # Reduce stock
+                line.product_id.quantity -= line.quantity
+
+                # 🔥 CREATE HISTORY
+                self.env['shop.stock.history'].create({
+                    'product_id': line.product_id.id,
+                    'change_qty': -line.quantity,
+                    'note': f"Sold in Order {record.name}"
+                })
+
+            record.state = 'done'
+    def action_cancel(self):
+        for record in self:
+
+            if record.state == 'done':
+                for line in record.order_line:
+
+                    # Restore stock
+                    line.product_id.quantity += line.quantity
+
+                    # 🔥 CREATE HISTORY
+                    self.env['shop.stock.history'].create({
+                        'product_id': line.product_id.id,
+                        'change_qty': line.quantity,
+                        'note': f"Restored from Cancel {record.name}"
+                    })
+
+            record.state = 'cancel'
