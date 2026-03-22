@@ -1,21 +1,18 @@
 {
     'name': 'Shop Dashboard',
     'version': '1.0',
-    'depends': ['base', 'shop_base'],   # IMPORTANT CHANGE
+    'depends': ['web', 'shop_sales'],
     'data': [
         'security/ir.model.access.csv',
+        'views/sale_graph.xml',
+        'views/sale_pivot.xml',
         'views/dashboard_view.xml',
     ],
-    
     'installable': True,
     'application': True,
-     'assets': {
+    'assets': {
         'web.assets_backend': [
-            
-              'shop_dashboard/static/src/css/dashboard.css',
-              'shop_dashboard/static/src/xml/dashboard_chart.xml',
-              'https://cdn.jsdelivr.net/npm/chart.js',
-          
-       ],
-     },
+            'shop_dashboard/static/src/css/dashboard.css',
+        ],
+    },
 }

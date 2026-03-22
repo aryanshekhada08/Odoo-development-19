@@ -1,0 +1,17 @@
+<odoo>
+
+    <record id="view_sale_pivot" model="ir.ui.view">
+        <field name="name">shop.sale.pivot</field>
+        <field name="model">shop.sale</field>
+        <field name="arch" type="xml">
+
+            <pivot string="Sales Pivot">
+                <field name="total" type="measure"/>
+                <field name="customer_id" type="row"/>
+                <field name="create_date" type="col"/>
+            </pivot>
+
+        </field>
+    </record>
+
+</odoo>

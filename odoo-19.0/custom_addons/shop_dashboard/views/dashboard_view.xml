@@ -4,170 +4,76 @@
         <field name="name">shop.dashboard.form</field>
         <field name="model">shop.dashboard</field>
         <field name="arch" type="xml">
-
-            <form string="Dashboard">
-                <sheet>
-
-                    <!-- HEADER -->
+            <form string="Dashboard" create="0" delete="0">
+                <sheet class="dashboard-shell">
                     <div class="oe_title">
-                        <h1>📊 Business Dashboard</h1>
+                        <h1>Business Dashboard</h1>
+                        <div class="dashboard-subtitle">Track sales, customers, and product performance in one place.</div>
                     </div>
 
-                    <!-- KPI CARDS -->
                     <div class="row mt16">
-
                         <div class="col-lg-4">
-                            <div class="o_stat_box bg-primary text-white p-3 rounded">
+                            <div class="kpi-card kpi-blue">
                                 <div class="o_stat_value">
                                     <field name="total_sales"/>
                                 </div>
-                                <div class="o_stat_text">
-                                    🛒 Total Orders
-                                </div>
+                                <div>Total Orders</div>
                             </div>
                         </div>
 
                         <div class="col-lg-4">
-                            <div class="o_stat_box bg-success text-white p-3 rounded">
+                            <div class="kpi-card kpi-green">
                                 <div class="o_stat_value">
                                     <field name="total_revenue"/>
                                 </div>
-                                <div class="o_stat_text">
-                                    💰 Total Revenue
-                                </div>
+                                <div>Total Revenue</div>
                             </div>
                         </div>
 
                         <div class="col-lg-4">
-                            <div class="o_stat_box bg-warning text-white p-3 rounded">
+                            <div class="kpi-card kpi-orange">
                                 <div class="o_stat_value">
                                     <field name="total_customers"/>
                                 </div>
-                                <div class="o_stat_text">
-                                    👤 Total Customers
+                                <div>Total Customers</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt24">
+                        <div class="col-lg-6 mb-3">
+                            <div class="dashboard-panel panel-blue">
+                                <div class="dashboard-panel-title">Sales Overview</div>
+                                <div class="dashboard-panel-body">
+                                    <field name="chart_data" widget="dashboard_graph" graph_type="bar" nolabel="1"/>
                                 </div>
                             </div>
                         </div>
-
+                        <div class="col-lg-6 mb-3">
+                            <div class="dashboard-panel panel-orange">
+                                <div class="dashboard-panel-title">Top Products</div>
+                                <div class="dashboard-panel-body">
+                                    <field name="top_products_data" widget="dashboard_graph" graph_type="bar" nolabel="1"/>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-
-                    <!-- SPACING -->
-                    <div class="mt32"/>
-
-                    <!-- CHART SECTION -->
-                    <group>
-
-                        <!-- HIDDEN DATA -->
-                        <field name="chart_data" />
-
-                        <div class="o_form_label">
-                            <h2>📊 Monthly Sales Analytics</h2>
-                        </div>
-
-                        <div style="width:100%; text-align:center;">
-                            <canvas id="salesChart" style="max-width:900px;height:300px;"></canvas>
-                        </div>
-
-                        <!-- SAFE SCRIPT -->
-                        <script type="text/javascript">
-                            setTimeout(function () {
-
-                                const dataField = document.querySelector('[name="chart_data"]');
-
-                                if (!dataField) return;
-
-                                let chartData = {};
-
-                                try {
-                                    chartData = JSON.parse(dataField.value || dataField.textContent || "{}");
-                                } catch (e) {}
-
-                                const ctx = document.getElementById('salesChart');
-
-                                if (ctx &amp;&amp; chartData.labels) {
-                                    new Chart(ctx, {
-                                        type: 'bar',
-                                        data: {
-                                            labels: chartData.labels,
-                                            datasets: [{
-                                                label: "Monthly Sales",
-                                                data: chartData.values,
-                                            }]
-                                        },
-                                        options: {
-                                            responsive: true,
-                                            plugins: {
-                                                legend: {
-                                                    display: true
-                                                }
-                                            }
-                                        }
-                                    });
-                                }
-
-                            }, 1200);
-                        </script>
-
-                    </group>
-                    <group>
-                        <field name="top_products_data" />
-
-                        <div class="o_form_label">
-                            <h2>🥧 Top Products</h2>
-                        </div>
-
-                        <div style="width:100%; text-align:center;">
-                            <canvas id="productPieChart" style="max-width:600px;height:300px;"></canvas>
-                        </div>
-                       <script type="text/javascript">
-                            setTimeout(function () {
-
-                                const el = document.querySelector('[name="top_products_data"]');
-                                if (!el) return;
-
-                                let data = {};
-
-                                try {
-                                    data = JSON.parse(el.value || el.textContent || "{}");
-                                } catch (e) {
-                                    console.log("Pie JSON error", e);
-                                }
-
-                                const ctx = document.getElementById('productPieChart');
-
-                                if (ctx &amp;&amp; data.labels) {
-                                    new Chart(ctx, {
-                                        type: 'pie',
-                                        data: {
-                                            labels: data.labels,
-                                            datasets: [{
-                                                data: data.values,
-                                            }]
-                                        }
-                                    });
-                                }
-
-                            }, 500);
-                        </script>
-                    </group>
                 </sheet>
             </form>
-
         </field>
     </record>
 
-    <!-- ACTION -->
-    <record id="action_dashboard" model="ir.actions.act_window">
+    <record id="action_dashboard_server" model="ir.actions.server">
         <field name="name">Dashboard</field>
-        <field name="res_model">shop.dashboard</field>
-        <field name="view_mode">form</field>
+        <field name="model_id" ref="model_shop_dashboard"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_open_dashboard()</field>
     </record>
 
-    <!-- MENU -->
     <menuitem id="menu_dashboard"
               name="Dashboard"
               parent="shop_base.menu_shop_root"
-              action="action_dashboard"
+              action="action_dashboard_server"
               sequence="1"/>
 
 </odoo>

@@ -1,0 +1,16 @@
+<odoo>
+
+    <record id="view_sale_graph" model="ir.ui.view">
+        <field name="name">shop.sale.graph</field>
+        <field name="model">shop.sale</field>
+        <field name="arch" type="xml">
+
+            <graph string="Sales Analysis" type="bar">
+                <field name="total" type="measure"/>
+                <field name="create_date" type="row"/>
+            </graph>
+
+        </field>
+    </record>
+
+</odoo>
