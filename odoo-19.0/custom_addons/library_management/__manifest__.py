@@ -7,12 +7,12 @@
     'data': [
         'security/ir.model.access.csv',
         'data/sequence.xml',
-        'views/menu.xml',
-        'views/book_view.xml',
+        'views/book_view.xml',     # ← actions defined first
         'views/member_view.xml',
         'views/borrow_view.xml',
         'views/fine_view.xml',
         'views/wizard_view.xml',
+        'views/menu.xml',          
     ],
     'installable': True,
     'application': True,

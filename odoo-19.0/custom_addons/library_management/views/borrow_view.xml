@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ─── LIST VIEW ────────────────────────────────── -->
+    <record id="view_library_borrow_list" model="ir.ui.view">
+        <field name="name">library.borrow.list</field>
+        <field name="model">library.borrow</field>
+        <field name="arch" type="xml">
+            <list string="Borrows"
+                  decoration-success="state == 'returned'"
+                  decoration-warning="state == 'borrowed'"
+                  decoration-danger="state == 'overdue'"
+                  decoration-muted="state == 'draft'">
+
+                <field name="reference"/>
+                <field name="book_id"/>
+                <field name="member_id"/>
+                <field name="borrow_date"/>
+                <field name="due_date"/>
+                <field name="days_overdue"
+                       decoration-danger="days_overdue > 0"
+                       decoration-muted="days_overdue == 0"/>
+                <field name="fine_amount"
+                       decoration-danger="fine_amount > 0"
+                       decoration-muted="fine_amount == 0"/>
+                <field name="state"
+                       widget="badge"
+                       decoration-success="state == 'returned'"
+                       decoration-warning="state == 'borrowed'"
+                       decoration-danger="state == 'overdue'"
+                       decoration-muted="state == 'draft'"/>
+
+            </list>
+        </field>
+    </record>
+
+    <!-- ─── FORM VIEW ────────────────────────────────── -->
+    <record id="view_library_borrow_form" model="ir.ui.view">
+        <field name="name">library.borrow.form</field>
+        <field name="model">library.borrow</field>
+        <field name="arch" type="xml">
+            <form string="Borrow">
+                <header>
+
+                    <!-- Borrow Button -->
+                    <button name="action_borrow"
+                            string="Issue Book"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'draft'"/>
+
+                    <!-- Return Button -->
+                    <button name="action_return"
+                            string="Return Book"
+                            type="object"
+                            class="btn-success"
+                            invisible="state not in ('borrowed', 'overdue')"/>
+
+                    <!-- Cancel Button -->
+                    <button name="action_cancel"
+                            string="Cancel"
+                            type="object"
+                            class="btn-danger"
+                            invisible="state != 'draft'"/>
+
+                    <field name="state"
+                           widget="statusbar"
+                           statusbar_visible="draft,borrowed,returned,overdue"/>
+
+                </header>
+
+                <sheet>
+
+                    <!-- ── Ribbon for Overdue ── -->
+                    <widget name="web_ribbon"
+                            title="Overdue!"
+                            bg_color="bg-danger"
+                            invisible="state != 'overdue'"/>
+
+                    <!-- ── Stat Buttons ── -->
+                    <div class="oe_button_box" name="button_box">
+
+                        <button name="action_library_fine"
+                                type="action"
+                                class="oe_stat_button"
+                                icon="fa-money"
+                                invisible="fine_amount == 0">
+                            <div class="o_stat_info">
+                                <span class="o_stat_value">
+                                    <field name="fine_amount"/>
+                                </span>
+                                <span class="o_stat_text">Fine</span>
+                            </div>
+                        </button>
+
+                        <button class="oe_stat_button"
+                                icon="fa-calendar-times-o"
+                                invisible="days_overdue == 0">
+                            <div class="o_stat_info">
+                                <span class="o_stat_value">
+                                    <field name="days_overdue"/>
+                                </span>
+                                <span class="o_stat_text">Days Overdue</span>
+                            </div>
+                        </button>
+
+                    </div>
+
+                    <!-- ── Title ── -->
+                    <div class="oe_title">
+                        <h1>
+                            <field name="reference" readonly="1"/>
+                        </h1>
+                    </div>
+
+                    <!-- ── Main Fields ── -->
+                    <group>
+                        <group string="📚 Borrow Info">
+                            <field name="book_id"
+                                   domain="[('available_copies', '>', 0)]"
+                                   invisible="state != 'draft'"/>
+                            <field name="book_id"
+                                   readonly="1"
+                                   invisible="state == 'draft'"/>
+                            <field name="member_id"
+                                   domain="[('state', '=', 'active')]"
+                                   invisible="state != 'draft'"/>
+                            <field name="member_id"
+                                   readonly="1"
+                                   invisible="state == 'draft'"/>
+                        </group>
+                        <group string="📅 Dates">
+                            <field name="borrow_date"/>
+                            <field name="due_date"/>
+                            <field name="return_date"
+                                   invisible="state not in ('returned', 'overdue')"/>
+                        </group>
+                    </group>
+
+                    <!-- ── Fine Warning Banner ── -->
+                    <div class="alert alert-danger mb-3"
+                         invisible="days_overdue == 0"
+                         role="alert">
+                        <strong>⚠️ Overdue!</strong>
+                        This book is
+                        <field name="days_overdue"
+                               readonly="1"
+                               nolabel="1"
+                               class="d-inline"/>
+                        day(s) overdue. Fine:
+                        <field name="fine_amount"
+                               readonly="1"
+                               nolabel="1"
+                               class="d-inline"/>
+                    </div>
+
+                    <!-- ── Notes ── -->
+                    <group string="📝 Notes">
+                        <field name="notes"
+                               nolabel="1"
+                               placeholder="Add any notes about this borrow..."/>
+                    </group>
+
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ─── SEARCH VIEW ──────────────────────────────── -->
+    <record id="view_library_borrow_search" model="ir.ui.view">
+        <field name="name">library.borrow.search</field>
+        <field name="model">library.borrow</field>
+        <field name="arch" type="xml">
+            <search string="Search Borrows">
+
+                <field name="reference"/>
+                <field name="book_id"/>
+                <field name="member_id"/>
+
+                <filter string="Draft"
+                        name="filter_draft"
+                        domain="[('state', '=', 'draft')]"/>
+
+                <filter string="Borrowed"
+                        name="filter_borrowed"
+                        domain="[('state', '=', 'borrowed')]"/>
+
+                <filter string="Overdue"
+                        name="filter_overdue"
+                        domain="[('state', '=', 'overdue')]"/>
+
+                <filter string="Returned"
+                        name="filter_returned"
+                        domain="[('state', '=', 'returned')]"/>
+
+                <separator/>
+
+                <filter string="Has Fine"
+                        name="filter_has_fine"
+                        domain="[('fine_amount', '>', 0)]"/>
+
+                <separator/>
+
+                <group expand="0" string="Group By">
+                    <filter string="Status"
+                            name="group_state"
+                            context="{'group_by': 'state'}"/>
+                    <filter string="Book"
+                            name="group_book"
+                            context="{'group_by': 'book_id'}"/>
+                    <filter string="Member"
+                            name="group_member"
+                            context="{'group_by': 'member_id'}"/>
+                    <filter string="Borrow Date"
+                            name="group_borrow_date"
+                            context="{'group_by': 'borrow_date:month'}"/>
+                </group>
+
+            </search>
+        </field>
+    </record>
+
+    <!-- ─── KANBAN VIEW ──────────────────────────────── -->
+    <record id="view_library_borrow_kanban" model="ir.ui.view">
+        <field name="name">library.borrow.kanban</field>
+        <field name="model">library.borrow</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state"
+                    class="o_kanban_small_column">
+
+                <field name="reference"/>
+                <field name="book_id"/>
+                <field name="member_id"/>
+                <field name="due_date"/>
+                <field name="days_overdue"/>
+                <field name="fine_amount"/>
+                <field name="state"/>
+
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_global_click">
+
+                            <!-- State Badge -->
+                            <div class="d-flex justify-content-between mb-2">
+                                <strong>
+                                    <field name="reference"/>
+                                </strong>
+                                <field name="state"
+                                       widget="badge"
+                                       decoration-success="state == 'returned'"
+                                       decoration-warning="state == 'borrowed'"
+                                       decoration-danger="state == 'overdue'"
+                                       decoration-muted="state == 'draft'"/>
+                            </div>
+
+                            <!-- Book and Member -->
+                            <div class="mb-1">
+                                📚 <field name="book_id"/>
+                            </div>
+                            <div class="mb-1">
+                                👤 <field name="member_id"/>
+                            </div>
+
+                            <!-- Due Date -->
+                            <div class="mb-1 text-muted">
+                                📅 Due: <field name="due_date"/>
+                            </div>
+
+                            <!-- Fine Warning -->
+                            <div class="text-danger fw-bold"
+                                 invisible="fine_amount == 0">
+                                ⚠️ Fine: <field name="fine_amount"/>
+                            </div>
+
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ─── ACTION ───────────────────────────────────── -->
+    <record id="action_library_borrow" model="ir.actions.act_window">
+        <field name="name">Borrows</field>
+        <field name="res_model">library.borrow</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="view_library_borrow_search"/>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No borrows yet!
+            </p>
+            <p>
+                Issue a book to a member to start tracking.
+            </p>
+        </field>
+    </record>
+
+</odoo>

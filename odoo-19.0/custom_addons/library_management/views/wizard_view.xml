@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ─── WIZARD FORM VIEW ─────────────────────────── -->
+    <record id="view_issue_book_wizard_form" model="ir.ui.view">
+        <field name="name">library.issue.book.wizard.form</field>
+        <field name="model">library.issue.book.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Issue Book to Member">
+
+                <sheet>
+
+                    <!-- ── Warning Banner ── -->
+                    <div class="alert alert-warning mb-3"
+                         invisible="member_state != 'blocked'"
+                         role="alert">
+                        <strong>⚠️ Warning!</strong>
+                        This member is currently blocked due to unpaid fines.
+                    </div>
+
+                    <!-- ── Title ── -->
+                    <div class="oe_title">
+                        <h2>📚 Issue Book to Member</h2>
+                        <p class="text-muted">
+                            Fill in the details below to issue a book.
+                            Due date is automatically set to 14 days.
+                        </p>
+                    </div>
+
+                    <!-- ── Main Fields ── -->
+                    <group>
+                        <group string="👤 Member">
+                            <field name="member_id"
+                                   options="{'no_create': True}"
+                                   placeholder="Select a member..."/>
+                            <field name="member_active_borrows"
+                                   readonly="1"
+                                   decoration-danger="member_active_borrows >= 3"
+                                   decoration-warning="member_active_borrows == 2"
+                                   decoration-success="member_active_borrows == 0"/>
+                            <field name="member_state"
+                                   widget="badge"
+                                   decoration-success="member_state == 'active'"
+                                   decoration-danger="member_state == 'blocked'"
+                                   decoration-warning="member_state == 'expired'"/>
+                        </group>
+                        <group string="📖 Book">
+                            <field name="book_id"
+                                   options="{'no_create': True}"
+                                   placeholder="Select a book..."/>
+                            <field name="book_available_copies"
+                                   readonly="1"
+                                   decoration-danger="book_available_copies == 0"
+                                   decoration-warning="book_available_copies == 1"
+                                   decoration-success="book_available_copies > 1"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group string="📅 Dates">
+                            <field name="borrow_date"/>
+                            <field name="due_date"/>
+                        </group>
+                        <group string="📝 Notes">
+                            <field name="notes"
+                                   nolabel="1"
+                                   placeholder="Optional notes..."/>
+                        </group>
+                    </group>
+
+                    <!-- ── Summary Banner ── -->
+                    <div class="alert alert-info mb-3"
+                         invisible="not member_id or not book_id"
+                         role="alert">
+                        <strong>📋 Summary</strong><br/>
+                        Member
+                        <field name="member_id"
+                               readonly="1"
+                               nolabel="1"
+                               class="d-inline fw-bold"/>
+                        will borrow
+                        <field name="book_id"
+                               readonly="1"
+                               nolabel="1"
+                               class="d-inline fw-bold"/>
+                        until
+                        <field name="due_date"
+                               readonly="1"
+                               nolabel="1"
+                               class="d-inline fw-bold"/>
+                    </div>
+
+                </sheet>
+
+                <!-- ── Footer Buttons ── -->
+                <footer>
+                    <button name="action_issue_book"
+                            string="✅ Issue Book"
+                            type="object"
+                            class="btn-primary"/>
+                    <button string="Cancel"
+                            class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+
+            </form>
+        </field>
+    </record>
+
+    <!-- ─── ACTION TO OPEN WIZARD ────────────────────── -->
+    <record id="action_issue_book_wizard" model="ir.actions.act_window">
+        <field name="name">Issue Book</field>
+        <field name="res_model">library.issue.book.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- ─── MENU ITEM FOR WIZARD ─────────────────────── -->
+    <menuitem id="menu_issue_book_wizard"
+              name="Issue Book"
+              parent="menu_library_borrows"
+              action="action_issue_book_wizard"
+              sequence="1"/>
+
+</odoo>
