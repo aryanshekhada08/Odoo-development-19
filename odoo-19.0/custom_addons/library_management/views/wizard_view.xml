@@ -116,10 +116,4 @@
     </record>
 
     <!-- ─── MENU ITEM FOR WIZARD ─────────────────────── -->
-    <menuitem id="menu_issue_book_wizard"
-              name="Issue Book"
-              parent="menu_library_borrows"
-              action="action_issue_book_wizard"
-              sequence="1"/>
-
 </odoo>

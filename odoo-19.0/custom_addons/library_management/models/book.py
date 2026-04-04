@@ -1,6 +1,7 @@
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
 
+
 class LibraryBook(models.Model):
     _name = 'library.book'
     _description = 'Library Book'
@@ -24,21 +25,37 @@ class LibraryBook(models.Model):
         ('available', 'Available'),
         ('borrowed', 'Borrowed'),
         ('unavailable', 'Unavailable'),
-    ], default='available', string="Status")
+    ], compute="_compute_state", store=True, string="Status")
+
+    is_out_of_stock = fields.Boolean(
+        "Out of Stock",
+        compute="_compute_is_out_of_stock",
+        store=True,
+    )
 
     borrow_count = fields.Integer("Times Borrowed", default=0)
+
+    @api.depends('total_copies', 'available_copies')
+    def _compute_state(self):
+        for record in self:
+            if record.available_copies <= 0:
+                record.state = 'unavailable'
+            elif record.available_copies < record.total_copies:
+                record.state = 'borrowed'
+            else:
+                record.state = 'available'
+
+    @api.depends('available_copies')
+    def _compute_is_out_of_stock(self):
+        for record in self:
+            record.is_out_of_stock = record.available_copies <= 0
 
     @api.constrains('total_copies', 'available_copies')
     def _check_copies(self):
         for record in self:
+            if record.total_copies < 0:
+                raise ValidationError("Total copies cannot be negative!")
             if record.available_copies < 0:
                 raise ValidationError("Available copies cannot be negative!")
             if record.available_copies > record.total_copies:
                 raise ValidationError("Available copies cannot exceed total copies!")
-
-    @api.onchange('available_copies')
-    def _onchange_available_copies(self):
-        if self.available_copies <= 0:
-            self.state = 'borrowed'
-        else:
-            self.state = 'available'

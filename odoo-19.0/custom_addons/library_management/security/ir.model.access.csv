@@ -3,3 +3,4 @@ access_library_book,access_library_book,model_library_book,base.group_user,1,1,1
 access_library_member,access_library_member,model_library_member,base.group_user,1,1,1,1
 access_library_borrow,access_library_borrow,model_library_borrow,base.group_user,1,1,1,1
 access_library_fine,access_library_fine,model_library_fine,base.group_user,1,1,1,1
+access_library_issue_book_wizard,access_library_issue_book_wizard,model_library_issue_book_wizard,base.group_user,1,1,1,1

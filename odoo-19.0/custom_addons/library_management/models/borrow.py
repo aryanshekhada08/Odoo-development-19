@@ -109,6 +109,13 @@ class LibraryBorrow(models.Model):
                     body=f"Book '{record.book_id.title}' returned on time by {record.member_id.name}."
                 )
 
+    def action_cancel(self):
+        for record in self:
+            if record.state != 'draft':
+                raise ValidationError("Only draft borrows can be cancelled.")
+            record.unlink()
+        return True
+
     def action_mark_overdue(self):
         overdue_borrows = self.search([
             ('state', '=', 'borrowed'),
