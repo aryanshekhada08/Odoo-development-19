@@ -42,8 +42,8 @@
                 <sheet>
                     <!-- ── Stat Buttons ── -->
                     <div class="oe_button_box" name="button_box">
-                        <button name="action_library_borrow"
-                                type="action"
+                        <button name="action_view_borrows"
+                                type="object"
                                 class="oe_stat_button"
                                 icon="fa-book">
                             <field name="borrow_count"
@@ -85,43 +85,41 @@
     </record>
 
     <!-- ─── SEARCH VIEW ──────────────────────────────── -->
-    <record id="view_library_book_search" model="ir.ui.view">
-        <field name="name">library.book.search</field>
-        <field name="model">library.book</field>
-        <field name="arch" type="xml">
-            <search string="Search Books">
+                <record id="view_library_book_search" model="ir.ui.view">
+                    <field name="name">library.book.search</field>
+                    <field name="model">library.book</field>
+                    <field name="arch" type="xml">
+                        <search string="Search Books">
 
-                <field name="title"/>
-                <field name="author"/>
-                <field name="isbn"/>
+                            <field name="title"/>
+                            <field name="author"/>
+                            <field name="isbn"/>
 
-                <filter string="Available"
-                        name="filter_available"
-                        domain="[('state', '=', 'available')]"/>
+                            <filter string="Available"
+                                    name="filter_available"
+                                    domain="[('state', '=', 'available')]"/>
 
-                <filter string="Borrowed"
-                        name="filter_borrowed"
-                        domain="[('state', '=', 'borrowed')]"/>
+                            <filter string="Borrowed"
+                                    name="filter_borrowed"
+                                    domain="[('state', '=', 'borrowed')]"/>
 
-                <filter string="Out of Stock"
-                        name="filter_out_of_stock"
-                        domain="[('is_out_of_stock', '=', True)]"/>
+                            <filter string="Out of Stock"
+                                    name="filter_out_of_stock"
+                                    domain="[('available_copies', '=', 0)]"/>
 
-                <separator/>
+                            <separator/>
 
-                <group expand="0" string="Group By">
-                    <filter string="Category"
-                            name="group_category"
-                            context="{'group_by': 'category'}"/>
-                    <filter string="Status"
-                            name="group_state"
-                            context="{'group_by': 'state'}"/>
-                </group>
+                            <filter string="Group By Category"
+                                    name="group_category"
+                                    context="{'group_by': 'category'}"/>
 
-            </search>
-        </field>
-    </record>
+                            <filter string="Group By Status"
+                                    name="group_state"
+                                    context="{'group_by': 'state'}"/>
 
+                        </search>
+                    </field>
+                </record>
     <!-- ─── ACTION ───────────────────────────────────── -->
     <record id="action_library_book" model="ir.actions.act_window">
         <field name="name">Books</field>

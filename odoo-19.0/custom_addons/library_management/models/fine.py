@@ -1,5 +1,5 @@
 from odoo import models, fields, api
-from odoo.exceptions import ValidationError
+from odoo.exceptions import AccessError, ValidationError
 
 class LibraryFine(models.Model):
     _name = 'library.fine'
@@ -41,6 +41,10 @@ class LibraryFine(models.Model):
     payment_date = fields.Date("Payment Date")
     notes = fields.Text("Notes")
 
+    def _check_manager_access(self):
+        if not self.env.user.has_group('library_management.group_library_manager'):
+            raise AccessError("Only library managers can perform this action.")
+
     # ─── Compute ───────────────────────────────────────
 
     @api.depends('amount', 'paid_amount')
@@ -61,6 +65,7 @@ class LibraryFine(models.Model):
     # ─── Business Logic ────────────────────────────────
 
     def action_pay_full(self):
+        self._check_manager_access()
         for record in self:
             record.paid_amount = record.amount
             record.state = 'paid'
@@ -78,6 +83,7 @@ class LibraryFine(models.Model):
                 record.member_id.action_unblock()
 
     def action_pay_partial(self, amount):
+        self._check_manager_access()
         for record in self:
             record.paid_amount += amount
             if record.remaining_amount <= 0:
@@ -89,14 +95,13 @@ class LibraryFine(models.Model):
                 body=f"Partial payment of {amount} received. Remaining: {record.remaining_amount}"
             )
 
-    @api.model
-    def create(self, vals):
-        vals['reference'] = self.env['ir.sequence'].next_by_code('library.fine') or 'New'
-
-        # auto block member when fine is created
-        member = self.env['library.member'].browse(vals.get('member_id'))
-        if member:
-            member.action_block()
-            member.block_reason = "Unpaid fine"
-
-        return super().create(vals)
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if not vals.get('reference'):
+                vals['reference'] = self.env['ir.sequence'].next_by_code('library.fine') or 'New'
+            member = self.env['library.member'].browse(vals.get('member_id'))
+            if member:
+                member.action_block()
+                member.block_reason = "Unpaid fine"
+        return super().create(vals_list)

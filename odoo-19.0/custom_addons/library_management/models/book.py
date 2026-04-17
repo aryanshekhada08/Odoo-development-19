@@ -53,9 +53,17 @@ class LibraryBook(models.Model):
     @api.constrains('total_copies', 'available_copies')
     def _check_copies(self):
         for record in self:
-            if record.total_copies < 0:
-                raise ValidationError("Total copies cannot be negative!")
             if record.available_copies < 0:
                 raise ValidationError("Available copies cannot be negative!")
             if record.available_copies > record.total_copies:
                 raise ValidationError("Available copies cannot exceed total copies!")
+            
+    def action_view_borrows(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Borrows',
+            'res_model': 'library.borrow',
+            'view_mode': 'list,form',
+            'domain': [('book_id', '=', self.id)],
+        }

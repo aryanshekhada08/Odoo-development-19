@@ -16,9 +16,7 @@
                 <field name="borrow_id"/>
                 <field name="amount"/>
                 <field name="paid_amount"/>
-                <field name="remaining_amount"
-                       decoration-danger="remaining_amount > 0"
-                       decoration-muted="remaining_amount == 0"/>
+                <field name="remaining_amount"/>
                 <field name="payment_date"/>
                 <field name="state"
                        widget="badge"
@@ -42,6 +40,7 @@
                             string="Mark as Fully Paid"
                             type="object"
                             class="btn-success"
+                            groups="library_management.group_library_manager"
                             invisible="state == 'paid'"/>
 
                     <field name="state"
@@ -52,7 +51,6 @@
 
                 <sheet>
 
-                    <!-- ── Ribbon ── -->
                     <widget name="web_ribbon"
                             title="Paid ✓"
                             bg_color="bg-success"
@@ -63,11 +61,14 @@
                             bg_color="bg-danger"
                             invisible="state != 'unpaid'"/>
 
-                    <!-- ── Stat Buttons ── -->
                     <div class="oe_button_box" name="button_box">
 
                         <button class="oe_stat_button"
-                                icon="fa-money">
+                                icon="fa-money"
+                                type="object"
+                                name="action_pay_full"
+                                groups="library_management.group_library_manager"
+                                invisible="state == 'paid'">
                             <div class="o_stat_info">
                                 <span class="o_stat_value">
                                     <field name="amount"/>
@@ -78,6 +79,9 @@
 
                         <button class="oe_stat_button"
                                 icon="fa-check-circle"
+                                type="object"
+                                name="action_pay_full"
+                                groups="library_management.group_library_manager"
                                 invisible="paid_amount == 0">
                             <div class="o_stat_info">
                                 <span class="o_stat_value">
@@ -87,27 +91,14 @@
                             </div>
                         </button>
 
-                        <button class="oe_stat_button"
-                                icon="fa-exclamation-circle"
-                                invisible="remaining_amount == 0">
-                            <div class="o_stat_info">
-                                <span class="o_stat_value">
-                                    <field name="remaining_amount"/>
-                                </span>
-                                <span class="o_stat_text">Remaining</span>
-                            </div>
-                        </button>
-
                     </div>
 
-                    <!-- ── Title ── -->
                     <div class="oe_title">
                         <h1>
                             <field name="reference" readonly="1"/>
                         </h1>
                     </div>
 
-                    <!-- ── Main Fields ── -->
                     <group>
                         <group string="📋 Fine Details">
                             <field name="member_id" readonly="1"/>
@@ -115,21 +106,19 @@
                             <field name="amount" readonly="1"/>
                         </group>
                         <group string="💰 Payment Info">
-                            <field name="paid_amount"/>
+                            <field name="paid_amount" readonly="1"/>
                             <field name="remaining_amount" readonly="1"/>
                             <field name="payment_date" readonly="1"/>
                         </group>
                     </group>
 
-                    <!-- ── Progress Bar ── -->
                     <group string="💳 Payment Progress">
                         <field name="paid_amount"
                                widget="progressbar"
-                               options="{'max_value': 'amount', 'editable': False}"
+                               options="{'max_value': 'amount', 'current_value': 'paid_amount', 'editable': False}"
                                nolabel="1"/>
                     </group>
 
-                    <!-- ── Paid Banner ── -->
                     <div class="alert alert-success mb-3"
                          invisible="state != 'paid'"
                          role="alert">
@@ -142,20 +131,18 @@
                         Member has been automatically unblocked.
                     </div>
 
-                    <!-- ── Unpaid Warning ── -->
                     <div class="alert alert-danger mb-3"
                          invisible="state != 'unpaid'"
                          role="alert">
                         <strong>⚠️ Payment Pending!</strong>
                         This member is blocked until fine is paid.
-                        Remaining amount:
+                        Remaining:
                         <field name="remaining_amount"
                                readonly="1"
                                nolabel="1"
                                class="d-inline"/>
                     </div>
 
-                    <!-- ── Notes ── -->
                     <group string="📝 Notes">
                         <field name="notes"
                                nolabel="1"
@@ -199,17 +186,17 @@
 
                 <separator/>
 
-                <group expand="0" string="Group By">
-                    <filter string="Member"
-                            name="group_member"
-                            context="{'group_by': 'member_id'}"/>
-                    <filter string="Status"
-                            name="group_state"
-                            context="{'group_by': 'state'}"/>
-                    <filter string="Payment Date"
-                            name="group_payment_date"
-                            context="{'group_by': 'payment_date:month'}"/>
-                </group>
+                <filter string="Group By Member"
+                        name="group_member"
+                        context="{'group_by': 'member_id'}"/>
+
+                <filter string="Group By Status"
+                        name="group_state"
+                        context="{'group_by': 'state'}"/>
+
+                <filter string="Group By Payment Date"
+                        name="group_payment_date"
+                        context="{'group_by': 'payment_date:month'}"/>
 
             </search>
         </field>

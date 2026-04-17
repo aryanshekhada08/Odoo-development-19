@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="rule_library_member_own_profile" model="ir.rule">
+        <field name="name">Library members can access their own profile</field>
+        <field name="model_id" ref="model_library_member"/>
+        <field name="groups" eval="[(4, ref('library_management.group_library_member_user'))]"/>
+        <field name="domain_force">[('user_id', '=', user.id)]</field>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+
+    <record id="rule_library_member_manager_all" model="ir.rule">
+        <field name="name">Library managers can access all members</field>
+        <field name="model_id" ref="model_library_member"/>
+        <field name="groups" eval="[(4, ref('library_management.group_library_manager'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <record id="rule_library_borrow_own_records" model="ir.rule">
+        <field name="name">Library members can access their own borrows</field>
+        <field name="model_id" ref="model_library_borrow"/>
+        <field name="groups" eval="[(4, ref('library_management.group_library_member_user'))]"/>
+        <field name="domain_force">[('member_id.user_id', '=', user.id)]</field>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+
+    <record id="rule_library_borrow_manager_all" model="ir.rule">
+        <field name="name">Library managers can access all borrows</field>
+        <field name="model_id" ref="model_library_borrow"/>
+        <field name="groups" eval="[(4, ref('library_management.group_library_manager'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <record id="rule_library_fine_own_records" model="ir.rule">
+        <field name="name">Library members can access their own fines</field>
+        <field name="model_id" ref="model_library_fine"/>
+        <field name="groups" eval="[(4, ref('library_management.group_library_member_user'))]"/>
+        <field name="domain_force">[('member_id.user_id', '=', user.id)]</field>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+
+    <record id="rule_library_fine_manager_all" model="ir.rule">
+        <field name="name">Library managers can access all fines</field>
+        <field name="model_id" ref="model_library_fine"/>
+        <field name="groups" eval="[(4, ref('library_management.group_library_manager'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+</odoo>

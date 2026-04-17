@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ─── Borrow Confirmation Email ─────────────────── -->
+    <record id="email_template_borrow_confirm" model="mail.template">
+        <field name="name">Library - Book Borrowed</field>
+        <field name="model_id" ref="model_library_borrow"/>
+        <field name="subject">📚 Book Borrowed: {{ object.book_id.title }}</field>
+        <field name="email_from">{{ user.email_formatted or user.company_id.email_formatted or '' }}</field>
+        <field name="email_to">{{ object.member_id.email or object.member_id.partner_id.email or '' }}</field>
+        <field name="body_html" type="html">
+            <div style="font-family: Arial, sans-serif; padding: 20px;">
+                <h2 style="color: #875A7B;">📚 Book Borrowed Successfully!</h2>
+                <p>Dear <strong><t t-out="object.member_id.name"/></strong>,</p>
+                <p>You have successfully borrowed the following book:</p>
+                <table style="border-collapse: collapse; width: 100%;">
+                    <tr style="background: #f5f5f5;">
+                        <td style="padding: 8px; border: 1px solid #ddd;"><strong>Book</strong></td>
+                        <td style="padding: 8px; border: 1px solid #ddd;"><t t-out="object.book_id.title"/></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; border: 1px solid #ddd;"><strong>Author</strong></td>
+                        <td style="padding: 8px; border: 1px solid #ddd;"><t t-out="object.book_id.author"/></td>
+                    </tr>
+                    <tr style="background: #f5f5f5;">
+                        <td style="padding: 8px; border: 1px solid #ddd;"><strong>Borrow Date</strong></td>
+                        <td style="padding: 8px; border: 1px solid #ddd;"><t t-out="object.borrow_date"/></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; border: 1px solid #ddd;"><strong>Due Date</strong></td>
+                        <td style="padding: 8px; border: 1px solid #ddd; color: #e74c3c;"><strong><t t-out="object.due_date"/></strong></td>
+                    </tr>
+                    <tr style="background: #f5f5f5;">
+                        <td style="padding: 8px; border: 1px solid #ddd;"><strong>Reference</strong></td>
+                        <td style="padding: 8px; border: 1px solid #ddd;"><t t-out="object.reference"/></td>
+                    </tr>
+                </table>
+                <br/>
+                <p style="color: #e74c3c;">⚠️ Please return the book by <strong><t t-out="object.due_date"/></strong> to avoid fines.</p>
+                <p>Thank you for using our Library!</p>
+            </div>
+        </field>
+        <field name="auto_delete" eval="False"/>
+    </record>
+
+    <!-- ─── Fine Notification Email ───────────────────── -->
+    <record id="email_template_fine_notify" model="mail.template">
+        <field name="name">Library - Fine Created</field>
+        <field name="model_id" ref="model_library_borrow"/>
+        <field name="subject">⚠️ Fine Created: {{ object.reference }}</field>
+        <field name="email_from">{{ user.email_formatted or user.company_id.email_formatted or '' }}</field>
+        <field name="email_to">{{ object.member_id.email or object.member_id.partner_id.email or '' }}</field>
+        <field name="body_html" type="html">
+            <div style="font-family: Arial, sans-serif; padding: 20px;">
+                <h2 style="color: #e74c3c;">⚠️ Overdue Fine Notice</h2>
+                <p>Dear <strong><t t-out="object.member_id.name"/></strong>,</p>
+                <p>You have been charged a fine for returning a book late:</p>
+                <table style="border-collapse: collapse; width: 100%;">
+                    <tr style="background: #f5f5f5;">
+                        <td style="padding: 8px; border: 1px solid #ddd;"><strong>Book</strong></td>
+                        <td style="padding: 8px; border: 1px solid #ddd;"><t t-out="object.book_id.title"/></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; border: 1px solid #ddd;"><strong>Days Overdue</strong></td>
+                        <td style="padding: 8px; border: 1px solid #ddd; color: #e74c3c;"><t t-out="object.days_overdue"/> days</td>
+                    </tr>
+                    <tr style="background: #f5f5f5;">
+                        <td style="padding: 8px; border: 1px solid #ddd;"><strong>Fine Amount</strong></td>
+                        <td style="padding: 8px; border: 1px solid #ddd; color: #e74c3c;"><strong><t t-out="object.fine_amount"/></strong></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; border: 1px solid #ddd;"><strong>Reference</strong></td>
+                        <td style="padding: 8px; border: 1px solid #ddd;"><t t-out="object.reference"/></td>
+                    </tr>
+                </table>
+                <br/>
+                <p>Your account has been <strong style="color: #e74c3c;">blocked</strong> until this fine is paid.</p>
+                <p>Please visit the library to clear your fine.</p>
+                <p>Thank you.</p>
+            </div>
+        </field>
+        <field name="auto_delete" eval="False"/>
+    </record>
+
+    <record id="email_template_overdue_notify" model="mail.template">
+        <field name="name">Library - Book Overdue</field>
+        <field name="model_id" ref="model_library_borrow"/>
+        <field name="subject">⏰ Overdue Book Notice: {{ object.book_id.title }}</field>
+        <field name="email_from">{{ user.email_formatted or user.company_id.email_formatted or '' }}</field>
+        <field name="email_to">{{ object.member_id.email or object.member_id.partner_id.email or '' }}</field>
+        <field name="body_html" type="html">
+            <div style="font-family: Arial, sans-serif; padding: 20px;">
+                <h2 style="color: #d35400;">⏰ Your Borrowed Book Is Overdue</h2>
+                <p>Dear <strong><t t-out="object.member_id.name"/></strong>,</p>
+                <p>This is a reminder that your borrowed book is now overdue.</p>
+                <table style="border-collapse: collapse; width: 100%;">
+                    <tr style="background: #f5f5f5;">
+                        <td style="padding: 8px; border: 1px solid #ddd;"><strong>Book</strong></td>
+                        <td style="padding: 8px; border: 1px solid #ddd;"><t t-out="object.book_id.title"/></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; border: 1px solid #ddd;"><strong>Borrow Date</strong></td>
+                        <td style="padding: 8px; border: 1px solid #ddd;"><t t-out="object.borrow_date"/></td>
+                    </tr>
+                    <tr style="background: #f5f5f5;">
+                        <td style="padding: 8px; border: 1px solid #ddd;"><strong>Due Date</strong></td>
+                        <td style="padding: 8px; border: 1px solid #ddd;"><t t-out="object.due_date"/></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; border: 1px solid #ddd;"><strong>Days Overdue</strong></td>
+                        <td style="padding: 8px; border: 1px solid #ddd; color: #d35400;"><strong><t t-out="object.days_overdue"/></strong></td>
+                    </tr>
+                    <tr style="background: #f5f5f5;">
+                        <td style="padding: 8px; border: 1px solid #ddd;"><strong>Reference</strong></td>
+                        <td style="padding: 8px; border: 1px solid #ddd;"><t t-out="object.reference"/></td>
+                    </tr>
+                </table>
+                <br/>
+                <p>Please return the book as soon as possible to avoid additional penalties.</p>
+                <p>Thank you.</p>
+            </div>
+        </field>
+        <field name="auto_delete" eval="False"/>
+    </record>
+
+</odoo>

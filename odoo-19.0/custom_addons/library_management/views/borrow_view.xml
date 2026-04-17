@@ -17,12 +17,6 @@
                 <field name="member_id"/>
                 <field name="borrow_date"/>
                 <field name="due_date"/>
-                <field name="days_overdue"
-                       decoration-danger="days_overdue > 0"
-                       decoration-muted="days_overdue == 0"/>
-                <field name="fine_amount"
-                       decoration-danger="fine_amount > 0"
-                       decoration-muted="fine_amount == 0"/>
                 <field name="state"
                        widget="badge"
                        decoration-success="state == 'returned'"
@@ -42,25 +36,25 @@
             <form string="Borrow">
                 <header>
 
-                    <!-- Borrow Button -->
                     <button name="action_borrow"
                             string="Issue Book"
                             type="object"
                             class="btn-primary"
+                            groups="library_management.group_library_manager"
                             invisible="state != 'draft'"/>
 
-                    <!-- Return Button -->
                     <button name="action_return"
                             string="Return Book"
                             type="object"
                             class="btn-success"
+                            groups="library_management.group_library_manager"
                             invisible="state not in ('borrowed', 'overdue')"/>
 
-                    <!-- Cancel Button -->
                     <button name="action_cancel"
                             string="Cancel"
                             type="object"
                             class="btn-danger"
+                            groups="library_management.group_library_manager"
                             invisible="state != 'draft'"/>
 
                     <field name="state"
@@ -71,17 +65,15 @@
 
                 <sheet>
 
-                    <!-- ── Ribbon for Overdue ── -->
                     <widget name="web_ribbon"
                             title="Overdue!"
                             bg_color="bg-danger"
                             invisible="state != 'overdue'"/>
 
-                    <!-- ── Stat Buttons ── -->
                     <div class="oe_button_box" name="button_box">
 
-                        <button name="action_library_fine"
-                                type="action"
+                        <button name="action_view_fines"
+                                type="object"
                                 class="oe_stat_button"
                                 icon="fa-money"
                                 invisible="fine_amount == 0">
@@ -93,27 +85,14 @@
                             </div>
                         </button>
 
-                        <button class="oe_stat_button"
-                                icon="fa-calendar-times-o"
-                                invisible="days_overdue == 0">
-                            <div class="o_stat_info">
-                                <span class="o_stat_value">
-                                    <field name="days_overdue"/>
-                                </span>
-                                <span class="o_stat_text">Days Overdue</span>
-                            </div>
-                        </button>
-
                     </div>
 
-                    <!-- ── Title ── -->
                     <div class="oe_title">
                         <h1>
                             <field name="reference" readonly="1"/>
                         </h1>
                     </div>
 
-                    <!-- ── Main Fields ── -->
                     <group>
                         <group string="📚 Borrow Info">
                             <field name="book_id"
@@ -137,7 +116,6 @@
                         </group>
                     </group>
 
-                    <!-- ── Fine Warning Banner ── -->
                     <div class="alert alert-danger mb-3"
                          invisible="days_overdue == 0"
                          role="alert">
@@ -154,7 +132,6 @@
                                class="d-inline"/>
                     </div>
 
-                    <!-- ── Notes ── -->
                     <group string="📝 Notes">
                         <field name="notes"
                                nolabel="1"
@@ -196,26 +173,21 @@
 
                 <separator/>
 
-                <filter string="Has Fine"
-                        name="filter_has_fine"
-                        domain="[('fine_amount', '>', 0)]"/>
+                <filter string="Group By Status"
+                        name="group_state"
+                        context="{'group_by': 'state'}"/>
 
-                <separator/>
+                <filter string="Group By Book"
+                        name="group_book"
+                        context="{'group_by': 'book_id'}"/>
 
-                <group expand="0" string="Group By">
-                    <filter string="Status"
-                            name="group_state"
-                            context="{'group_by': 'state'}"/>
-                    <filter string="Book"
-                            name="group_book"
-                            context="{'group_by': 'book_id'}"/>
-                    <filter string="Member"
-                            name="group_member"
-                            context="{'group_by': 'member_id'}"/>
-                    <filter string="Borrow Date"
-                            name="group_borrow_date"
-                            context="{'group_by': 'borrow_date:month'}"/>
-                </group>
+                <filter string="Group By Member"
+                        name="group_member"
+                        context="{'group_by': 'member_id'}"/>
+
+                <filter string="Group By Borrow Date"
+                        name="group_borrow_date"
+                        context="{'group_by': 'borrow_date:month'}"/>
 
             </search>
         </field>
@@ -233,7 +205,6 @@
                 <field name="book_id"/>
                 <field name="member_id"/>
                 <field name="due_date"/>
-                <field name="days_overdue"/>
                 <field name="fine_amount"/>
                 <field name="state"/>
 
@@ -241,7 +212,6 @@
                     <t t-name="card">
                         <div class="oe_kanban_global_click">
 
-                            <!-- State Badge -->
                             <div class="d-flex justify-content-between mb-2">
                                 <strong>
                                     <field name="reference"/>
@@ -254,20 +224,15 @@
                                        decoration-muted="state == 'draft'"/>
                             </div>
 
-                            <!-- Book and Member -->
                             <div class="mb-1">
                                 📚 <field name="book_id"/>
                             </div>
                             <div class="mb-1">
                                 👤 <field name="member_id"/>
                             </div>
-
-                            <!-- Due Date -->
                             <div class="mb-1 text-muted">
                                 📅 Due: <field name="due_date"/>
                             </div>
-
-                            <!-- Fine Warning -->
                             <div class="text-danger fw-bold"
                                  invisible="fine_amount == 0">
                                 ⚠️ Fine: <field name="fine_amount"/>

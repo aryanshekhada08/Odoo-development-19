@@ -113,6 +113,7 @@
         <field name="res_model">library.issue.book.wizard</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
+        <field name="groups_id" eval="[(4, ref('library_management.group_library_manager'))]"/>
     </record>
 
     <!-- ─── MENU ITEM FOR WIZARD ─────────────────────── -->

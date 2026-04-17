@@ -1,5 +1,5 @@
 from odoo import models, fields, api
-from odoo.exceptions import ValidationError
+from odoo.exceptions import AccessError, ValidationError
 
 
 class IssueBookWizard(models.TransientModel):
@@ -55,6 +55,10 @@ class IssueBookWizard(models.TransientModel):
         related='book_id.available_copies',
         readonly=True
     )
+
+    def _check_manager_access(self):
+        if not self.env.user.has_group('library_management.group_library_manager'):
+            raise AccessError("Only library managers can issue books.")
 
     # ─── Compute ───────────────────────────────────────
 
@@ -124,6 +128,7 @@ class IssueBookWizard(models.TransientModel):
 
     def action_issue_book(self):
         self.ensure_one()
+        self._check_manager_access()
 
         # Final safety checks
         if self.member_id.is_blocked:
